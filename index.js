@@ -155,6 +155,50 @@ callbackFunction((err, ret) => {
   console.log(ret);
 });
 
-// 10. Timers
+// 10. File system
 
+const fs = require('fs');
+const fsPromises = require('fs/promises');
 
+const jsPath = path.join(path.resolve(), 'package.json');
+const jsFile = path.join(path.resolve(), 'file1.txt');
+
+fs.accessSync(jsPath);
+try {
+  fs.accessSync(jsFile, fs.constants.W_OK);
+} catch (error) {
+  console.error(error)  //  no such file or directory
+}
+
+console.log(fs.accessSync(jsPath)) //  undefined
+
+fs.appendFileSync('myFirstFile.txt', 'Synchronously append data to a file.')
+
+console.log(fs.readFileSync(path.join(currentDir, 'myFirstFile.txt'), 'utf8'));
+
+fsPromises.appendFile('file.txt','Hello File');
+
+fs.stat('newDir', function(err) {
+  if(err) {
+    fsPromises.mkdir('newDir');
+  }
+  fsPromises.opendir('newDir').then((res) => console.log(res));
+}); 
+
+const stat = fs.statSync('myFirstFile.txt');
+const statAsync = fsPromises.stat('file.txt');
+
+statAsync.then((res) => console.log(res));
+statAsync.then((res) => console.log(res.isFile()));
+
+console.log('Size of myFirstFile.txt', stat.size);
+console.log('myFirstFile.txt is directory', stat.isDirectory());
+
+fsPromises.cp('myFirstFile.txt', 'copy.txt');
+
+fsPromises.writeFile('b.txt', 'hell'); // create b.txt and add 'hell' text
+fsPromises.appendFile('b.txt','o');  // add 'o' to 'hell' and result is 'hello'
+fsPromises.writeFile('b.txt', 'this is end');  // delete all in b.txt and add 'this is end'
+
+fsPromises.writeFile('delete.txt', ''); // create delete.txt
+fsPromises.unlink('delete.txt');  // delete delete.txt
